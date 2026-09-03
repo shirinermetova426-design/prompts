@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Промпты для тренеров — блог и личный бренд</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12161C;
+    --surface: #1A2029;
+    --surface-2: #202A35;
+    --line: #2B3440;
+    --text: #E7EAEE;
+    --text-dim: #93A0AF;
+    --accent: #F2C14E;
+    --accent-dim: #A8822F;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --display: 'Big Shoulders Display', var(--sans);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a { color:inherit; }
+
+  ::selection{ background:var(--accent); color:#12161C; }
+
+  /* Layout */
+  .shell{
+    display:grid;
+    grid-template-columns: 240px 1fr;
+    max-width:1180px;
+    margin:0 auto;
+  }
+
+  /* Hero */
+  .hero{
+    padding: 72px 32px 40px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero-kicker{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent);
+    letter-spacing:0.02em;
+    margin:0 0 18px;
+  }
+  .hero h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(40px, 6vw, 72px);
+    line-height:0.98;
+    letter-spacing:-0.01em;
+    margin:0 0 20px;
+    max-width:820px;
+  }
+  .hero p{
+    font-size:17px;
+    color:var(--text-dim);
+    max-width:640px;
+    margin:0 0 8px;
+  }
+  .hero .hint{
+    font-size:14px;
+    color:var(--text-dim);
+    max-width:640px;
+    border-left:2px solid var(--accent-dim);
+    padding-left:14px;
+    margin-top:22px;
+  }
+
+  /* Sidebar nav */
+  .nav-col{
+    grid-column:1;
+  }
+  nav.modules{
+    position:sticky;
+    top:0;
+    padding: 40px 20px 40px 32px;
+    height:100vh;
+    overflow-y:auto;
+  }
+  nav.modules a{
+    display:flex;
+    gap:12px;
+    align-items:baseline;
+    text-decoration:none;
+    padding:11px 0;
+    color:var(--text-dim);
+    font-size:14px;
+    border-bottom:1px solid var(--line);
+    transition:color .15s ease;
+  }
+  nav.modules a:hover{ color:var(--text); }
+  nav.modules a.active{ color:var(--accent); }
+  nav.modules a .num{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    min-width:20px;
+  }
+  nav.modules a.active .num{ color:var(--accent); }
+
+  /* Main content */
+  .content-col{ grid-column:2; border-left:1px solid var(--line); }
+
+  section.module{
+    padding: 56px 40px;
+    border-bottom:1px solid var(--line);
+  }
+  section.module:last-of-type{ border-bottom:none; }
+
+  .module-head{
+    display:flex;
+    align-items:flex-end;
+    gap:18px;
+    margin-bottom:28px;
+  }
+  .module-head .index{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:56px;
+    color:var(--surface-2);
+    line-height:1;
+  }
+  .module-head h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:30px;
+    margin:0;
+    line-height:1.1;
+  }
+
+  .prompt-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:4px;
+    margin-bottom:22px;
+    overflow:hidden;
+  }
+  .prompt-card:last-child{ margin-bottom:0; }
+
+  .prompt-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 20px;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--line);
+  }
+  .prompt-head h3{
+    margin:0;
+    font-size:16px;
+    font-weight:600;
+    font-family:var(--sans);
+  }
+  .copy-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--bg);
+    background:var(--accent);
+    border:none;
+    border-radius:3px;
+    padding:7px 12px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition: transform .1s ease;
+  }
+  .copy-btn:hover{ background:#F5CD70; }
+  .copy-btn:active{ transform:scale(0.96); }
+  .copy-btn:focus-visible{ outline:2px solid var(--text); outline-offset:2px; }
+  .copy-btn.copied{ background:#7FCB8E; }
+
+  .prompt-body{
+    padding:20px;
+    font-family:var(--mono);
+    font-size:13.5px;
+    line-height:1.65;
+    color:var(--text);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+
+  /* Footer / checklist */
+  .footer{
+    padding:56px 40px 80px;
+  }
+  .footer h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:28px;
+    margin:0 0 24px;
+  }
+  .checklist{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    gap:14px;
+  }
+  .checklist li{
+    display:flex;
+    gap:14px;
+    padding:16px 18px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:4px;
+    font-size:14.5px;
+    color:var(--text-dim);
+  }
+  .checklist li .mark{
+    font-family:var(--mono);
+    color:var(--accent);
+    flex-shrink:0;
+  }
+  .checklist li strong{ color:var(--text); }
+
+  footer.site-footer{
+    padding:24px 40px 48px;
+    color:var(--text-dim);
+    font-size:13px;
+    border-top:1px solid var(--line);
+  }
+
+  /* Mobile */
+  @media (max-width: 860px){
+    .shell{ grid-template-columns:1fr; }
+    .nav-col{ grid-column:1; }
+    nav.modules{
+      position:sticky;
+      top:0;
+      height:auto;
+      display:flex;
+      overflow-x:auto;
+      gap:4px;
+      padding:14px 16px;
+      background:var(--bg);
+      border-bottom:1px solid var(--line);
+      z-index:10;
+    }
+    nav.modules a{
+      border-bottom:none;
+      white-space:nowrap;
+      padding:8px 12px;
+      background:var(--surface);
+      border-radius:20px;
+    }
+    .content-col{ grid-column:1; border-left:none; }
+    .hero{ padding:48px 20px 32px; }
+    section.module{ padding:40px 20px; }
+    .module-head .index{ font-size:36px; }
+    .module-head h2{ font-size:22px; }
+    .footer{ padding:40px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="hero-kicker">Рабочая тетрадь промптов · 6 форматов</p>
+  <h1>Промпты для тренеров, которые ведут блог</h1>
+  <p>Каждый промпт построен по одной схеме: роль → контекст → конкретная задача → формат вывода → ограничения. Такая структура заставляет любую модель выдавать разбор по делу, а не общие фразы.</p>
+  <p class="hint">Перед использованием замени всё в [квадратных скобках] на свои данные. Чем подробнее заполнишь — тем сильнее результат.</p>
+</div>
+
+<div class="shell">
+  <div class="nav-col">
+    <nav class="modules" id="nav">
+      <a href="#m1" data-target="m1"><span class="num">01</span> Позиционирование</a>
+      <a href="#m2" data-target="m2"><span class="num">02</span> Контент-план и рубрики</a>
+      <a href="#m4" data-target="m4"><span class="num">03</span> Голос и стиль</a>
+      <a href="#m5" data-target="m5"><span class="num">04</span> Аудит и продвижение</a>
+      <a href="#maximum" data-target="maximum"><span class="num">05</span> Как получить максимум</a>
+    </nav>
+  </div>
+
+  <div class="content-col">
+
+    <section class="module" id="m1">
+      <div class="module-head">
+        <span class="index">01</span>
+        <h2>Позиционирование и стратегия блога</h2>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <h3>Промпт 1.1 — Глубокое позиционирование</h3>
+          <button class="copy-btn" type="button">Скопировать</button>
+        </div>
+        <div class="prompt-body">Ты — стратег по личному бренду с 15-летним опытом работы с экспертами и тренерами. 
+Твоя задача — помочь мне сформулировать сильное позиционирование для блога.
+
+Контекст обо мне:
+- Ниша: [например, силовые тренировки для женщин 35+]
+- Опыт: [X лет, ключевые достижения, сертификаты]
+- Целевая аудитория: [возраст, пол, доход, боли, текущий уровень знаний]
+- Проблема, которую я решаю лучше других: [опиши]
+- Мои ценности и принципы в работе: [опиши]
+- Тренеры/блогеры, на которых я похож или которых уважаю: [3-5 имён]
+- Чем я НЕ хочу быть похож на типичных тренеров в нише: [опиши]
+
+Задачи:
+1. Задай мне 5 уточняющих вопросов, если информации недостаточно для сильного позиционирования.
+2. Сформулируй 5 вариантов позиционирования в формате "Я помогаю [кому] достичь [результат] через [уникальный метод], без [частое возражение/страх аудитории]".
+3. Для каждого варианта укажи: в чём его сила, в чём риск (может показаться узким/широким/непонятным), для какой стадии развития блога он подходит (старт/рост/зрелость).
+4. Выбери из пяти вариантов лучший и обоснуй выбор с точки зрения дифференциации на рынке.
+5. Заверши кратким манифестом (5-7 предложений) — тем, во что я верю как тренер, который можно закрепить как "шапку" блога.
+
+Формат ответа: структурированный, с подзаголовками, без воды.</div>
+      </div>
+    </section>
+
+    <section class="module" id="m2">
+      <div class="module-head">
+        <span class="index">02</span>
+        <h2>Контент-план и рубрики</h2>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <h3>Промпт 2.1 — Разработка постоянных рубрик</h3>
+          <button class="copy-btn" type="button">Скопировать</button>
+        </div>
+        <div class="prompt-body">Ты — редактор блога, который выстраивает контент-сетку для эксперта.
+
+Ниша: [ниша]. Аудитория: [опиши]. Тон блога: [дерзкий/тёплый/строгий/экспертный — выбери].
+
+Придумай 6 постоянных рубрик для регулярного ведения блога. Для каждой рубрики укажи:
+- Название рубрики (короткое, запоминающееся, с эмодзи если уместно)
+- Периодичность выхода
+- Формат подачи (карусель, текст, видео, сторис)
+- Задача рубрики (какую цель бизнеса/доверия она закрывает)
+- 3 готовых примера тем в рамках этой рубрики
+- Шаблон структуры поста для этой рубрики (какие блоки текста идут по порядку)
+
+Рубрики должны быть разнообразны по целям: минимум одна на экспертность, одна на личное, одна на вовлечение аудитории, одна на кейсы/результаты.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <h3>Промпт 2.2 — Контент-план на месяц с логикой воронки</h3>
+          <button class="copy-btn" type="button">Скопировать</button>
+        </div>
+        <div class="prompt-body">Ты — контент-стратег, который выстраивает блоги экспертов по принципу воронки: внимание → доверие → экспертность → продажа.
+
+Обо мне:
+- Ниша: [ниша]
+- Позиционирование: [вставь готовую формулировку из блока 1]
+- Что я продаю в итоге: [продукт/услуга, цена, формат]
+- Мои рубрики: [вставь список рубрик из промпта 2.1]
+- Платформа для блога: [Instagram/Telegram]
+- Периодичность публикаций: [сколько раз в неделю]
+- Главные возражения аудитории перед покупкой: [3-5 возражений]
+
+Задача:
+1. Составь контент-план на 30 дней (можно таблицей: дата — рубрика из списка выше — тема поста — цель поста — призыв к действию).
+2. Распредели посты по рубрикам равномерно, а не хаотично — так, чтобы за месяц каждая рубрика вышла несколько раз согласно её периодичности.
+3. Распредели контент по пропорции: 40% обучающий/полезный, 30% личное и закулисье, 20% социальное доказательство (кейсы, отзывы), 10% прямые продажи.
+4. Каждая тема должна закрывать одно из возражений аудитории или один конкретный вопрос, который реально задают клиенты.
+5. Отметь 3-4 "якорных" поста в месяце — самые важные, вокруг которых можно строить рекламу/сторис/рассылку.
+6. В конце дай список из 10 запасных тем на случай, если вдохновение закончится.
+
+Не используй общие формулировки тем вроде "мотивационный пост" — каждая тема должна быть готова к написанию, максимально конкретна.</div>
+      </div>
+    </section>
+
+    <section class="module" id="m4">
+      <div class="module-head">
+        <span class="index">03</span>
+        <h2>Голос и стиль — чтобы не звучать как ИИ</h2>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <h3>Промпт 7.1 — Анализ и закрепление своего голоса</h3>
+          <button class="copy-btn" type="button">Скопировать</button>
+        </div>
+        <div class="prompt-body">Ты — лингвист-редактор, специализирующийся на анализе индивидуального стиля речи для контент-мейкеров.
+
+Вот 3-5 моих текстов (посты, переписки с клиентами, голосовые транскрибированные в текст — то, что максимально похоже на "живую" меня):
+[вставь тексты, чем более естественные и неотредактированные — тем лучше]
+
+Задача:
+1. Проанализируй: длину предложений, любимые слова и обороты, наличие юмора/иронии, как я начинаю и заканчиваю мысли, использую ли я профессиональный жаргон или объясняю просто.
+2. Составь "паспорт голоса" — документ на 10-15 пунктов, который описывает, как я говорю (например: "короткие рубленые фразы", "часто задаю риторические вопросы", "избегаю восклицательных знаков", "использую сравнения из повседневной жизни").
+3. Укажи 3-5 слов/фраз-паразитов ИИ-текста, которые НЕ похожи на мой голос и которых стоит избегать при генерации постов за меня (например, "в современном мире", "важно понимать, что").
+4. Сохрани этот паспорт голоса — я буду прикладывать его к будущим промптам, чтобы любой текст звучал как я, а не как нейросеть.</div>
+      </div>
+    </section>
+
+    <section class="module" id="m5">
+      <div class="module-head">
+        <span class="index">04</span>
+        <h2>Аудит страницы и рекомендации по продвижению</h2>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <h3>Промпт 8.1 — Детальный аудит блога/страницы с планом действий</h3>
+          <button class="copy-btn" type="button">Скопировать</button>
+        </div>
+        <div class="prompt-body">Ты — маркетинговый аудитор и стратег по продвижению, специализирующийся на личных брендах экспертов и тренеров. Ты сочетаешь взгляд SEO-специалиста, копирайтера и специалиста по конверсии.
+
+Страница для аудита: [вставь ссылку на блог/сайт/лендинг]
+Если у тебя нет доступа к просмотру страниц по ссылке — сообщи об этом прямо и попроси меня вставить текст страницы, скриншоты или описание её структуры вместо ссылки, не придумывай содержание.
+
+Контекст:
+- Моя ниша: [ниша]
+- Цель продвижения: [выбери одну главную: рост подписчиков блога / рост охвата и вовлечённости / продажи онлайн-курса или консультаций / запись на персональные тренировки]
+- Целевая аудитория: [опиши: возраст, боли, уровень знаний]
+- Что уже пробовал(а) для продвижения и что сработало слабо: [опиши, если есть]
+- Есть ли у меня доступ к аналитике (просмотры, конверсия, откуда трафик)? [да/нет, если да — вставь ключевые цифры]
+
+Задача — проведи аудит по 5 направлениям:
+
+1. ПЕРВОЕ ВПЕЧАТЛЕНИЕ (первые 5 секунд)
+   - Понятно ли за 5 секунд, кто я, для кого этот блог и какую пользу он даёт?
+   - Что первое видит посетитель и работает ли это на цель [впиши цель]?
+
+2. СТРУКТУРА И КОНТЕНТ
+   - Логична ли навигация/структура постов?
+   - Есть ли явный баланс между пользой, личным и продажами, или явный перекос?
+   - Какие темы/форматы явно проседают относительно моей ниши и цели?
+
+3. ПОЗИЦИОНИРОВАНИЕ И ДОВЕРИЕ
+   - Считывается ли моя экспертность и уникальность на фоне конкурентов в нише [ниша]?
+   - Есть ли социальные доказательства (кейсы, отзывы, цифры) и достаточно ли их?
+
+4. ПРИЗЫВЫ К ДЕЙСТВИЮ И ВОРОНКА
+   - Есть ли понятный следующий шаг для читателя на пути к цели [впиши цель]?
+   - Не перегружена ли страница CTA, или наоборот — их не хватает?
+   - Соответствуют ли призывы к действию стадии готовности аудитории (холодная/тёплая/горячая)?
+
+5. ТЕХНИЧЕСКИЕ И SEO-МОМЕНТЫ (если применимо к формату страницы)
+   - Заголовки, мета-описания, ключевые слова, скорость восприятия текста
+   - Мобильная читаемость контента
+
+Формат вывода:
+1. Краткое резюме на 3-4 предложения: сильные стороны и главная проблема страницы относительно цели [впиши цель].
+2. Таблица: направление аудита — что сейчас — проблема — рекомендация.
+3. План действий из 10 пунктов, разделённый на 2 группы: "быстрые правки на этой неделе" и "стратегические изменения на 1-3 месяца".
+4. 3 метрики, по которым я смогу отследить, сработали ли изменения.
+
+Будь предельно конкретен и критичен — не давай общих советов вроде "добавьте больше пользы", указывай, ЧТО именно добавить и ГДЕ.</div>
+      </div>
+    </section>
+
+    <section class="footer" id="maximum">
+      <h2>Как получить максимум от этих промптов</h2>
+      <ul class="checklist">
+        <li><span class="mark">01</span><span><strong>Заполняй контекст максимально подробно.</strong> Пустые или общие вставки в скобках дают общий шаблонный ответ. Чем конкретнее данные — реальные истории, реальные вопросы клиентов, реальные цифры — тем сильнее результат.</span></li>
+        <li><span class="mark">02</span><span><strong>Проси модель задавать уточняющие вопросы</strong>, если видишь, что ответ получается общим — большинство промптов выше уже это закладывают.</span></li>
+        <li><span class="mark">03</span><span><strong>Используй паспорт голоса</strong> (промпт 7.1) для всех последующих промптов — прикладывай его как контекст, чтобы весь контент звучал единообразно и не «по-нейросетевому».</span></li>
+        <li><span class="mark">04</span><span><strong>Итерируй.</strong> После первого ответа проси: «сделай короче», «добавь больше конкретики про [X]», «сделай тон более дерзким/мягким» — не останавливайся на первом варианте.</span></li>
+      </ul>
+    </section>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  Рабочая тетрадь промптов для тренеров · сохрани страницу в закладки и возвращайся перед каждым постом
+</footer>
+
+<script>
+  // Copy to clipboard
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.closest('.prompt-card').querySelector('.prompt-body').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Скопировано';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1500);
+      });
+    });
+  });
+
+  // Scrollspy for side nav
+  const navLinks = document.querySelectorAll('nav.modules a');
+  const sections = Array.from(navLinks).map(a => document.getElementById(a.dataset.target));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.id;
+      const link = document.querySelector(`nav.modules a[data-target="${id}"]`);
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => s && observer.observe(s));
+</script>
+
+</body>
+</html>
